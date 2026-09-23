@@ -1,27 +1,42 @@
-import { projects } from "../../assets/assets";
-import { FolderOpen, Code, Camera, Palette, TrendingUp, Clock, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { FolderOpen, Palette, TrendingUp, Clock, Plus, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import { adminDashboardAPI } from "../../config/apiService";
+import type { DashboardStats, Project } from "../../types";
+import toast from "react-hot-toast";
 
 const AdminDashboard = () => {
-  // Calculate statistics
-  const totalProjects = projects.length;
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categoryStats = projects.reduce((acc, project) => {
-    acc[project.category] = (acc[project.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsData, projectsData] = await Promise.all([
+          adminDashboardAPI.getDashboardStats(),
+          adminDashboardAPI.getRecentProjects()
+        ]);
+        setStats(statsData);
+        setRecentProjects(projectsData);
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+        toast.error("Failed to load dashboard data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const categoryIcons: Record<string, any> = {
-    "Web Development": Code,
-    "Photography": Camera,
-    "UI/UX Design": Palette,
-  };
+    fetchData();
+  }, []);
 
-  const categoryColors: Record<string, string> = {
-    "Web Development": "from-blue-500 to-blue-600",
-    "Photography": "from-purple-500 to-purple-600",
-    "UI/UX Design": "from-pink-500 to-pink-600",
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -43,41 +58,68 @@ const AdminDashboard = () => {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-slate-400 text-sm mb-1">Total Projects</p>
-              <p className="text-4xl font-bold text-white">{totalProjects}</p>
+              <p className="text-4xl font-bold text-white">{stats?.projects || 0}</p>
             </div>
             <div className="bg-orange-700/20 p-3 rounded-xl">
               <FolderOpen className="w-6 h-6 text-orange-900" />
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2 text-sm">
-            <span className="text-green-400">+12%</span>
-            <span className="text-slate-500">from last month</span>
+            <span className="text-green-400">Portfolio</span>
+            <span className="text-slate-500">Total count</span>
           </div>
         </div>
 
-        {/* Category Stats */}
-        {Object.entries(categoryStats).map(([category, count]) => {
-          const Icon = categoryIcons[category] || FolderOpen;
-          const gradient = categoryColors[category] || "from-gray-500 to-gray-600";
-          return (
-            <div key={category} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 hover:border-neutral-700 transition-all hover:shadow-lg">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-slate-400 text-sm mb-1">{category}</p>
-                  <p className="text-4xl font-bold text-white">{count}</p>
-                </div>
-                <div className={`bg-gradient-to-br ${gradient} p-3 rounded-xl`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center gap-2 text-sm">
-                <span className="text-slate-500">
-                  {Math.round((count / totalProjects) * 100)}% of total
-                </span>
-              </div>
+        {/* Services */}
+        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 hover:border-orange-700/50 transition-all hover:shadow-lg hover:shadow-orange-700/10">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-slate-400 text-sm mb-1">Services</p>
+              <p className="text-4xl font-bold text-white">{stats?.services || 0}</p>
             </div>
-          );
-        })}
+            <div className="bg-blue-700/20 p-3 rounded-xl">
+              <Palette className="w-6 h-6 text-blue-500" />
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <span className="text-green-400">Active</span>
+            <span className="text-slate-500">Services offered</span>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 hover:border-orange-700/50 transition-all hover:shadow-lg hover:shadow-orange-700/10">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-slate-400 text-sm mb-1">Testimonials</p>
+              <p className="text-4xl font-bold text-white">{stats?.testimonials || 0}</p>
+            </div>
+            <div className="bg-purple-700/20 p-3 rounded-xl">
+              <MessageSquare className="w-6 h-6 text-purple-500" />
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <span className="text-green-400">Reviews</span>
+            <span className="text-slate-500">Client feedback</span>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 hover:border-orange-700/50 transition-all hover:shadow-lg hover:shadow-orange-700/10">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-slate-400 text-sm mb-1">Messages</p>
+              <p className="text-4xl font-bold text-white">{stats?.messages.unread || 0}</p>
+            </div>
+            <div className="bg-green-700/20 p-3 rounded-xl">
+              <Clock className="w-6 h-6 text-green-500" />
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <span className="text-orange-400">Unread</span>
+            <span className="text-slate-500">of {stats?.messages.total || 0} total</span>
+          </div>
+        </div>
       </div>
 
       {/* Recent Projects with new design */}
@@ -87,10 +129,10 @@ const AdminDashboard = () => {
             <Clock className="w-5 h-5 text-orange-900" />
             <h2 className="text-xl font-semibold text-white">Recent Projects</h2>
           </div>
-          <span className="text-sm text-slate-400">{projects.slice(0, 5).length} projects</span>
+          <span className="text-sm text-slate-400">{recentProjects.length} projects</span>
         </div>
         <div className="divide-y divide-neutral-800">
-          {projects.slice(0, 5).map((project) => (
+          {recentProjects.map((project) => (
             <div key={project.id} className="flex items-center gap-4 p-6 hover:bg-neutral-800/50 transition-colors">
               <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
                 <img

@@ -17,7 +17,10 @@ import uploadRouter from "./routes/uploadRoutes.js";
 const app = express();
 
 // Middleware
-app.use(cors())
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    credentials: true
+}));
 app.use(express.json());
 
 const port = process.env.PORT || 5000;

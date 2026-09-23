@@ -1,8 +1,40 @@
 import { Link } from "react-router-dom";
-import { assets, experience, skills } from "../assets/assets";
+import { useState, useEffect } from "react";
+import { assets } from "../assets/assets";
+import { skillsAPI, experienceAPI } from "../config/apiService";
+import type { Skill, Experience } from "../types";
 
 const AboutMe = () => {
-    
+    const [skills, setSkills] = useState<Skill[]>([]);
+    const [experience, setExperience] = useState<Experience[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [skillsData, experienceData] = await Promise.all([
+                    skillsAPI.getAllSkills(),
+                    experienceAPI.getAllExperience()
+                ]);
+                setSkills(skillsData);
+                setExperience(experienceData);
+            } catch (err) {
+                console.error("Failed to fetch data:", err);
+                setError("Failed to load data");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const getYearRange = (startDate: string, endDate: string | null) => {
+        const start = new Date(startDate).getFullYear();
+        const end = endDate ? new Date(endDate).getFullYear() : "Present";
+        return `${start} - ${end}`;
+    };
 
     return (
         <div className="min-h-screen bg-black">
@@ -51,22 +83,47 @@ const AboutMe = () => {
             <div className="px-4 md:px-24 lg:px-32 xl:px-40 py-16 border-t border-dashed border-neutral-800">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-3xl font-semibold text-white mb-8 text-center">Skills & Expertise</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        {skills.map((skill, index) => (
-                            <div key={index} className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-white font-medium">{skill.name}</span>
-                                    <span className="text-slate-400">{skill.level}%</span>
+
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="text-center py-12">
+                            <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-slate-400 mt-4">Loading skills...</p>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <div className="text-center py-12">
+                            <p className="text-red-400 text-lg">{error}</p>
+                        </div>
+                    )}
+
+                    {/* Skills Grid */}
+                    {!isLoading && !error && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {skills.map((skill) => (
+                                <div key={skill.id} className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-white font-medium">{skill.name}</span>
+                                        <span className="text-slate-400">{skill.level}%</span>
+                                    </div>
+                                    <div className="w-full bg-neutral-800 rounded-full h-2">
+                                        <div
+                                            className="bg-orange-700 h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${skill.level}%` }}
+                                        ></div>
+                                    </div>
                                 </div>
-                                <div className="w-full bg-neutral-800 rounded-full h-2">
-                                    <div
-                                        className="bg-orange-700 h-2 rounded-full transition-all duration-500"
-                                        style={{ width: `${skill.level}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {skills.length === 0 && !isLoading && !error && (
+                        <div className="text-center py-12">
+                            <p className="text-slate-400 text-lg">No skills available.</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -74,17 +131,42 @@ const AboutMe = () => {
             <div className="px-4 md:px-24 lg:px-32 xl:px-40 py-16 border-t border-dashed border-neutral-800">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-3xl font-semibold text-white mb-8 text-center">Experience</h2>
-                    <div className="space-y-8">
-                        {experience.map((exp, index) => (
-                            <div key={index} className="border-l-2 border-orange-700 pl-6 relative">
-                                <div className="absolute left-0 top-0 w-4 h-4 bg-orange-700 rounded-full -translate-x-1/2"></div>
-                                <span className="text-orange-700 text-sm font-medium">{exp.year}</span>
-                                <h3 className="text-xl font-semibold text-white mt-1">{exp.role}</h3>
-                                <p className="text-slate-400 font-medium">{exp.company}</p>
-                                <p className="text-slate-500 mt-2">{exp.description}</p>
-                            </div>
-                        ))}
-                    </div>
+
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="text-center py-12">
+                            <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-slate-400 mt-4">Loading experience...</p>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <div className="text-center py-12">
+                            <p className="text-red-400 text-lg">{error}</p>
+                        </div>
+                    )}
+
+                    {/* Experience List */}
+                    {!isLoading && !error && (
+                        <div className="space-y-8">
+                            {experience.map((exp) => (
+                                <div key={exp.id} className="border-l-2 border-orange-700 pl-6 relative">
+                                    <div className="absolute left-0 top-0 w-4 h-4 bg-orange-700 rounded-full -translate-x-1/2"></div>
+                                    <span className="text-orange-700 text-sm font-medium">{getYearRange(exp.startDate, exp.endDate)}</span>
+                                    <h3 className="text-xl font-semibold text-white mt-1">{exp.role}</h3>
+                                    <p className="text-slate-400 font-medium">{exp.company}</p>
+                                    <p className="text-slate-500 mt-2">{exp.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {experience.length === 0 && !isLoading && !error && (
+                        <div className="text-center py-12">
+                            <p className="text-slate-400 text-lg">No experience available.</p>
+                        </div>
+                    )}
                 </div>
             </div>
 

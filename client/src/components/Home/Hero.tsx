@@ -1,10 +1,51 @@
 
+import { useState, useEffect } from 'react';
 import { Code2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { stacks, assets } from '../../assets/assets';
+import { stacks } from '../../assets/assets';
+import { heroAPI } from '../../config/apiService';
 
 
 const Hero = () => {
+    const [heroData, setHeroData] = useState({
+        badgeText: "Software Developer & Photographer",
+        heading: "I build thoughtful software<br />people trust.",
+        subheading: "I create thoughtful software and striking images, blending technical precision with a creative eye.",
+        image: "",
+        primaryButtonText: "View My Work",
+        primaryButtonLink: "/projects",
+        secondaryButtonText: "Download Resume",
+        secondaryButtonLink: "#",
+        resumeUrl: "",
+        footerText: "Code, cameras, and a curiosity for better ideas",
+    });
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchHero = async () => {
+            try {
+                const data = await heroAPI.getHero();
+                setHeroData(data);
+            } catch (err) {
+                console.error("Failed to fetch hero data:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchHero();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <main className="w-full bg-black flex-1">
+                <div className="w-full px-4 md:px-24 lg:px-32 xl:px-40 mx-auto h-full">
+                    <div className="w-full h-full min-h-[calc(100vh-80px)] flex items-center justify-center border-x border-dashed border-neutral-800">
+                        <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <>
@@ -19,32 +60,40 @@ const Hero = () => {
                                 <span className="absolute inline-flex h-full w-full rounded-full bg-orange-700 opacity-75 animate-ping duration-300"></span>
                                 <span className="relative inline-flex size-2 rounded-full bg-orange-700"></span>
                             </div>
-                            <p className="text-sm text-white">Software Developer & Photographer</p>
+                            <p className="text-sm text-white">{heroData.badgeText}</p>
                         </div>
 
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl/19 text-center font-medium text-white max-w-[770px] mt-3 mx-auto max-sm:px-4">
-                            I build thoughtful software<br />people trust.
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl/19 text-center font-medium text-white max-w-[770px] mt-3 mx-auto max-sm:px-4" dangerouslySetInnerHTML={{ __html: heroData.heading }}>
                         </h1>
                         <p className="text-sm/5.5 text-center max-w-[510px] mt-2.5 mx-auto max-sm:px-4 text-neutral-300">
-                            I create thoughtful software and striking images, blending technical precision with a creative eye.
+                            {heroData.subheading}
                         </p>
 
                         <div className='flex flex-col sm:flex-row gap-4 sm:gap-5 mt-8 sm:mt-11 w-full sm:w-auto px-4 sm:px-0'>
-                            <Link to="/projects" className="flex items-center justify-center gap-1 bg-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
-                                View My Work
+                            <Link to={heroData.primaryButtonLink} className="flex items-center justify-center gap-1 bg-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
+                                {heroData.primaryButtonText}
                             </Link>
-                            <a
-                                href={assets.resume}
-                                download
-                                className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer"
-                            >
-                                Download Resume
-                            </a>
+                            {heroData.resumeUrl ? (
+                                <a
+                                    href={heroData.resumeUrl}
+                                    download="resume.pdf"
+                                    className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer"
+                                >
+                                    {heroData.secondaryButtonText}
+                                </a>
+                            ) : (
+                                <a
+                                    href={heroData.secondaryButtonLink}
+                                    className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer"
+                                >
+                                    {heroData.secondaryButtonText}
+                                </a>
+                            )}
                         </div>
 
                         <div className='flex items-center gap-2.5 px-6 mt-9'>
                             <Code2 className="size-7 text-orange-700" aria-hidden="true" />
-                            <p className='text-sm text-white'>Code, cameras, and a curiosity for better ideas</p>
+                            <p className='text-sm text-white'>{heroData.footerText}</p>
                             <Code2 className="size-7 text-orange-700" aria-hidden="true" />
                         </div>
 

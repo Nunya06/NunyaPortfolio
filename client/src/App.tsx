@@ -21,6 +21,7 @@ import AdminSkillForm from './Pages/Admin/AdminSkillForm'
 import AdminExperienceForm from './Pages/Admin/AdminExperienceForm'
 import AdminHero from './Pages/Admin/AdminHero'
 import AdminMessages from './Pages/Admin/AdminMessages'
+import NotFound from './Pages/NotFound'
 
 
 const App = () => {
@@ -40,7 +41,7 @@ const App = () => {
 
         {/* Admin pages */}
         <Route path="/superAdmin" element={
-          <ProtectedRoute>
+          <ProtectedRoute requireAdmin={true}>
             <AdminLayout />
           </ProtectedRoute>
         }>
@@ -63,6 +64,9 @@ const App = () => {
           <Route path="hero" element={<AdminHero />} />
           <Route path="messages" element={<AdminMessages />} />
         </Route>
+
+        {/* 404 - Catch all unmatched routes */}
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </>

@@ -1,46 +1,87 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Check, Trash2 } from "lucide-react";
+import { messagesAPI } from "../../config/apiService";
+import type { Message } from "../../types";
+import toast from "react-hot-toast";
 
 const AdminMessages = () => {
-  // Mock data - will be replaced with API call
-  const [messages, setMessages] = useState([
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      subject: "Project Inquiry",
-      message: "I have a project I'd like to discuss with you.",
-      isRead: false,
-      createdAt: "2024-01-15T10:30:00Z",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      subject: "Collaboration",
-      message: "Interested in collaborating on a photography project.",
-      isRead: true,
-      createdAt: "2024-01-14T14:20:00Z",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [selectedMessage, setSelectedMessage] = useState<typeof messages[0] | null>(null);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const data = await messagesAPI.getAllMessages();
+        setMessages(data);
+      } catch (err) {
+        console.error("Failed to fetch messages:", err);
+        toast.error("Failed to load messages");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const markAsRead = (id: string) => {
-    setMessages(messages.map(msg => 
-      msg.id === id ? { ...msg, isRead: true } : msg
-    ));
-    // TODO: Update via API
+    fetchMessages();
+  }, []);
+
+  const markAsRead = async (id: string) => {
+    try {
+      await messagesAPI.markMessageAsRead(id);
+      setMessages(messages.map(msg =>
+        msg.id === id ? { ...msg, isRead: true } : msg
+      ));
+      toast.success("Message marked as read");
+    } catch (err) {
+      console.error("Failed to mark as read:", err);
+      toast.error("Failed to mark message as read");
+    }
   };
 
-  const deleteMessage = (id: string) => {
-    if (confirm("Are you sure you want to delete this message?")) {
-      setMessages(messages.filter(msg => msg.id !== id));
-      if (selectedMessage?.id === id) {
-        setSelectedMessage(null);
+  const deleteMessage = async (id: string) => {
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-2">
+          <p className="text-white">Are you sure you want to delete this message?</p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg text-sm transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await messagesAPI.deleteMessage(id);
+                  setMessages(messages.filter(msg => msg.id !== id));
+                  if (selectedMessage?.id === id) {
+                    setSelectedMessage(null);
+                  }
+                  toast.success("Message deleted successfully");
+                } catch (err) {
+                  console.error("Failed to delete message:", err);
+                  toast.error("Failed to delete message");
+                }
+              }}
+              className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: Infinity,
+        style: {
+          background: '#1a1a1a',
+          border: '1px solid #333',
+          borderRadius: '12px',
+          padding: '16px',
+        },
       }
-      // TODO: Delete via API
-    }
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -69,15 +110,18 @@ const AdminMessages = () => {
       <div className="flex gap-6">
         {/* Messages List */}
         <div className="w-1/2 space-y-3">
-          {messages.map((message) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : messages.map((message) => (
             <div
               key={message.id}
               onClick={() => setSelectedMessage(message)}
-              className={`bg-neutral-900 border rounded-2xl p-4 cursor-pointer transition-colors ${
-                selectedMessage?.id === message.id
-                  ? "border-orange-900 bg-neutral-800"
-                  : "border-neutral-800 hover:border-neutral-700"
-              } ${!message.isRead ? "border-l-4 border-l-orange-900" : ""}`}
+              className={`bg-neutral-900 border rounded-2xl p-4 cursor-pointer transition-colors ${selectedMessage?.id === message.id
+                ? "border-orange-900 bg-neutral-800"
+                : "border-neutral-800 hover:border-neutral-700"
+                } ${!message.isRead ? "border-l-4 border-l-orange-900" : ""}`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">

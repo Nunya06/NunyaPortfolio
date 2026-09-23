@@ -1,17 +1,48 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
-import { projects } from "../assets/assets";
+import { useState, useEffect } from "react";
+import { projectsAPI } from "../config/apiService";
+import type { Project } from "../types";
 
 
 const ProjectPage = () => {
     const { id } = useParams();
-    const project = projects.find(p => p.id === parseInt(id));
+    const [project, setProject] = useState<Project | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectedImage, setSelectedImage] = useState(0);
 
-    if (!project) {
+    useEffect(() => {
+        const fetchProject = async () => {
+            if (!id) return;
+            try {
+                const data = await projectsAPI.getProjectById(id);
+                setProject(data);
+            } catch (err) {
+                console.error("Failed to fetch project:", err);
+                setError("Failed to load project");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProject();
+    }, [id]);
+
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
-                <p className="text-white text-xl">Project not found</p>
+                <div className="text-center">
+                    <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-slate-400 mt-4">Loading project...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !project) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <p className="text-white text-xl">{error || "Project not found"}</p>
             </div>
         );
     }
@@ -133,7 +164,7 @@ const ProjectPage = () => {
                                 </div>
                                 <div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-4">
                                     <p className="text-slate-400 text-sm mb-1">Status</p>
-                                    <p className="text-green-500 font-medium">Completed</p>
+                                    <p className={`font-medium ${project.status === "Completed" ? "text-green-500" : "text-orange-500"}`}>{project.status}</p>
                                 </div>
                             </div>
                         </div>

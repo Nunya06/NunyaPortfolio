@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Lock, Mail, ArrowRight, User, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { assets } from "../assets/assets";
+import toast from "react-hot-toast";
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, register, isAuthenticated, user } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -18,21 +19,68 @@ const Login = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
 
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            if (user?.isAdmin) {
+                navigate("/superAdmin");
+            } else {
+                navigate("/");
+            }
+        }
+    }, [isAuthenticated, user, navigate]);
+
+    const validatePassword = (password: string): { valid: boolean; message?: string } => {
+        if (password.length < 8) {
+            return { valid: false, message: "Password must be at least 8 characters long" };
+        }
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        if (!hasLetter) {
+            return { valid: false, message: "Password must contain at least one letter" };
+        }
+        if (!hasNumber) {
+            return { valid: false, message: "Password must contain at least one number" };
+        }
+        if (!hasSpecialChar) {
+            return { valid: false, message: "Password must contain at least one special character" };
+        }
+        return { valid: true };
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // TODO: Implement Supabase authentication
-        console.log(isLogin ? "Login attempt:" : "Registration attempt:", formData);
+        try {
+            if (isLogin) {
+                // Login
+                await login(formData.email, formData.password);
+            } else {
+                // Register
+                // Validate password
+                const passwordValidation = validatePassword(formData.password);
+                if (!passwordValidation.valid) {
+                    toast.error(passwordValidation.message);
+                    return;
+                }
 
-        // Simulate API delay
-        setTimeout(() => {
+                // Check password confirmation
+                if (formData.password !== formData.confirmPassword) {
+                    toast.error("Passwords do not match");
+                    return;
+                }
+
+                await register(formData.name, formData.email, formData.password);
+            }
+        } catch (error: any) {
+            console.error("Authentication error:", error);
+            // Error is already handled by toast in AuthContext
+        } finally {
             setIsLoading(false);
-            // Authenticate user
-            login();
-            // Redirect to admin panel
-            navigate("/superAdmin");
-        }, 1000);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

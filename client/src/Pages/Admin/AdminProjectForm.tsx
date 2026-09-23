@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X, Plus, Trash2 } from "lucide-react";
-import { projects } from "../../assets/assets";
+import { projectsAPI, uploadAPI } from "../../config/apiService";
+import toast from "react-hot-toast";
 
 const AdminProjectForm = () => {
   const navigate = useNavigate();
@@ -19,7 +20,9 @@ const AdminProjectForm = () => {
   });
 
   const [techInput, setTechInput] = useState("");
-  const [imageInput, setImageInput] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const categories = ["Web Development", "Photography", "UI/UX Design"];
   const statuses = ["Completed", "In Progress", "Planned"];
@@ -27,26 +30,55 @@ const AdminProjectForm = () => {
   // Load project data if editing
   useEffect(() => {
     if (isEditing && id) {
-      const project = projects.find((p) => p.id === parseInt(id));
-      if (project) {
-        setFormData({
-          title: project.title,
-          category: project.category,
-          description: project.description,
-          link: project.link || "",
-          technologies: project.technologies,
-          images: project.images,
-        });
-      }
+      const fetchProject = async () => {
+        setIsLoading(true);
+        try {
+          const project = await projectsAPI.getProjectById(id);
+          setFormData({
+            title: project.title,
+            category: project.category,
+            description: project.description,
+            link: project.link || "",
+            technologies: project.technologies,
+            images: project.images,
+            status: project.status,
+          });
+        } catch (err) {
+          console.error("Failed to fetch project:", err);
+          toast.error("Failed to load project");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchProject();
     }
   }, [isEditing, id]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // TODO: Save to Supabase
-    alert(isEditing ? "Project updated successfully!" : "Project saved successfully!");
-    navigate("/superAdmin/projects");
+
+    if (formData.images.length === 0) {
+      toast.error("Please add at least one image");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      if (isEditing && id) {
+        await projectsAPI.updateProject(id, formData);
+        toast.success("Project updated successfully!");
+      } else {
+        await projectsAPI.createProject(formData);
+        toast.success("Project saved successfully!");
+      }
+      navigate("/superAdmin/projects");
+    } catch (err) {
+      console.error("Failed to save project:", err);
+      toast.error("Failed to save project");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const addTechnology = () => {
@@ -66,13 +98,33 @@ const AdminProjectForm = () => {
     });
   };
 
-  const addImage = () => {
-    if (imageInput.trim() && formData.images.length < 5) {
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const newFiles = Array.from(files);
+    const totalImages = formData.images.length + newFiles.length;
+
+    if (totalImages > 5) {
+      toast.error("Maximum 5 images allowed");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = newFiles.map(file => uploadAPI.uploadSingle(file));
+      const results = await Promise.all(uploadPromises);
+      const imageUrls = results.map(result => result.url);
+
       setFormData({
         ...formData,
-        images: [...formData.images, imageInput.trim()],
+        images: [...formData.images, ...imageUrls],
       });
-      setImageInput("");
+      toast.success("Images uploaded successfully");
+    } catch (err) {
+      console.error("Failed to upload images:", err);
+      toast.error("Failed to upload images");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -239,25 +291,21 @@ const AdminProjectForm = () => {
             <label className="block text-sm font-medium text-white mb-2">
               Images * (Max 5)
             </label>
-            <div className="flex gap-2 mb-3">
+
+            <div className="mb-4">
               <input
-                type="url"
-                value={imageInput}
-                onChange={(e) => setImageInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addImage())}
-                className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-                placeholder="Add image URL"
-                disabled={formData.images.length >= 5}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleImageUpload(e.target.files)}
+                disabled={isUploading || formData.images.length >= 5}
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               />
-              <button
-                type="button"
-                onClick={addImage}
-                disabled={formData.images.length >= 5}
-                className="px-4 py-3 bg-orange-900 hover:bg-orange-800 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
+              {isUploading && (
+                <p className="text-sm text-orange-900 mt-2">Uploading images...</p>
+              )}
             </div>
+
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {formData.images.map((image, index) => (
                 <div key={index} className="relative group">
@@ -293,9 +341,10 @@ const AdminProjectForm = () => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors"
+            disabled={isSubmitting || isUploading}
+            className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isEditing ? "Update Project" : "Save Project"}
+            {isSubmitting ? "Saving..." : isUploading ? "Uploading..." : isEditing ? "Update Project" : "Save Project"}
           </button>
         </div>
       </form>
