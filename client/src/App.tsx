@@ -4,7 +4,7 @@ import Home from './Pages/Home'
 import AboutMe from './Pages/AboutMe'
 import Projects from './Pages/Projects'
 import ProjectPage from './Pages/ProjectPage'
-import Contact from './Pages/Contact'
+import ContactPage from './Pages/Contact'
 import AdminLayout from './Pages/Admin/AdminLayout'
 import AdminDashboard from './Pages/Admin/AdminDashboard'
 import AdminProjects from './Pages/Admin/AdminProjects'
@@ -36,7 +36,7 @@ const App = () => {
           <Route path="about-me" element={<AboutMe />} />
           <Route path="projects" element={<Projects />} />
           <Route path="project/:id" element={<ProjectPage />} />
-          <Route path="contact" element={<Contact />} />
+          <Route path="contact" element={<ContactPage />} />
         </Route>
 
         {/* Admin pages */}

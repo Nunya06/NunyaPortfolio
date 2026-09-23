@@ -27,7 +27,18 @@ const AdminHero = () => {
       setIsLoading(true);
       try {
         const data = await heroAPI.getHero();
-        setHeroData(data);
+        setHeroData({
+          badgeText: data.badgeText,
+          heading: data.heading,
+          subheading: data.subheading,
+          image: data.image || "",
+          primaryButtonText: data.primaryButtonText,
+          primaryButtonLink: data.primaryButtonLink,
+          secondaryButtonText: data.secondaryButtonText,
+          secondaryButtonLink: data.secondaryButtonLink,
+          resumeUrl: data.resumeUrl || "",
+          footerText: data.footerText,
+        });
       } catch (err) {
         console.error("Failed to fetch hero data:", err);
         toast.error("Failed to load hero data");
