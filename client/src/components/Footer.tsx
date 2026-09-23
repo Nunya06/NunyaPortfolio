@@ -40,7 +40,7 @@ const Footer = () => {
                     </a>
                 </div>
 
-                <p className="mt-4 text-center text-white text-sm sm:text-base">Copyright © 2026 <Link to='/superAdmin'>Niche.Dev</Link>. All rights reservered.</p>
+                <p className="mt-4 text-center text-white text-sm sm:text-base">Copyright © 2026 <Link to='/'>Niche.Dev</Link>. All rights reservered.</p>
 
             </footer>
         </section>

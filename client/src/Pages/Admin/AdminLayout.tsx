@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BarChart3, LogOut, PackageSearch, Plus, Shield, Menu, X } from "lucide-react";
+import { BarChart3, LogOut, PackageSearch, Plus, Shield, Menu, X, MessageSquare, User, Mail, Home, Inbox } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -12,6 +12,14 @@ const AdminLayout = () => {
         { to: "/superAdmin", label: "Dashboard", icon: BarChart3 },
         { to: "/superAdmin/projects/new", label: "Add Project", icon: Plus },
         { to: "/superAdmin/projects", label: "All Projects", icon: PackageSearch },
+        { to: "/superAdmin/services/new", label: "Add Service", icon: Plus },
+        { to: "/superAdmin/services", label: "All Services", icon: PackageSearch },
+        { to: "/superAdmin/testimonials/new", label: "Add Testimonial", icon: Plus },
+        { to: "/superAdmin/testimonials", label: "All Testimonials", icon: MessageSquare },
+        { to: "/superAdmin/about", label: "About Me", icon: User },
+        { to: "/superAdmin/contact", label: "Contact Info", icon: Mail },
+        { to: "/superAdmin/hero", label: "Hero Section", icon: Home },
+        { to: "/superAdmin/messages", label: "Messages", icon: Inbox },
         { to: "/", label: "Exit", icon: LogOut, action: () => { logout(); navigate("/") } },
     ];
 

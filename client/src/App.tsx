@@ -11,6 +11,16 @@ import AdminProjects from './Pages/Admin/AdminProjects'
 import AdminProjectForm from './Pages/Admin/AdminProjectForm'
 import Login from './Pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminServices from './Pages/Admin/AdminServices'
+import AdminTestimonial from './Pages/Admin/AdminTestimonial'
+import AdminServicesForm from './Pages/Admin/AdminServicesForm'
+import AdminTestimonialForm from './Pages/Admin/AdminTestimonialForm'
+import AdminAbout from './Pages/Admin/AdminAbout'
+import AdminContact from './Pages/Admin/AdminContact'
+import AdminSkillForm from './Pages/Admin/AdminSkillForm'
+import AdminExperienceForm from './Pages/Admin/AdminExperienceForm'
+import AdminHero from './Pages/Admin/AdminHero'
+import AdminMessages from './Pages/Admin/AdminMessages'
 
 
 const App = () => {
@@ -38,8 +48,20 @@ const App = () => {
           <Route path="projects" element={<AdminProjects />} />
           <Route path="projects/new" element={<AdminProjectForm />} />
           <Route path="projects/:id" element={<AdminProjectForm />} />
-
-
+          <Route path="services" element={<AdminServices />} />
+          <Route path="services/new" element={<AdminServicesForm />} />
+          <Route path="services/:id" element={<AdminServicesForm />} />
+          <Route path="testimonials" element={<AdminTestimonial />} />
+          <Route path="testimonials/new" element={<AdminTestimonialForm />} />
+          <Route path="testimonials/:id" element={<AdminTestimonialForm />} />
+          <Route path="about" element={<AdminAbout />} />
+          <Route path="about/skills/new" element={<AdminSkillForm />} />
+          <Route path="about/skills/:id" element={<AdminSkillForm />} />
+          <Route path="about/experience/new" element={<AdminExperienceForm />} />
+          <Route path="about/experience/:id" element={<AdminExperienceForm />} />
+          <Route path="contact" element={<AdminContact />} />
+          <Route path="hero" element={<AdminHero />} />
+          <Route path="messages" element={<AdminMessages />} />
         </Route>
 
       </Routes>

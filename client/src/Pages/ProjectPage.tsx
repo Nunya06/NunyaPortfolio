@@ -88,6 +88,20 @@ const ProjectPage = () => {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+
+
+                            <a
+                                href={project.link}
+                                className="flex-1 bg-orange-700 hover:bg-orange-800 text-white text-center py-3 sm:py-4 rounded-lg font-medium transition-colors"
+                            >
+                                View Live Project
+                            </a>
+
+
+
+                        </div>
+
+                        {/* <div className="flex flex-col sm:flex-row gap-4 mt-auto">
                             {(project.category === "Web Development" || project.category === "UI/UX Design") ? (
                                 <>
                                     <a
@@ -104,7 +118,7 @@ const ProjectPage = () => {
                                 //     View Code
                                 // </button>
                             )}
-                        </div>
+                        </div> */}
 
                         <div className="mt-8 pt-8 border-t border-neutral-800">
                             <h3 className="text-white font-medium mb-4 text-lg">Project Overview</h3>

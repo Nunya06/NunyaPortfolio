@@ -10,17 +10,19 @@ const AdminProjectForm = () => {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "Web Development",
+    category: "",
     description: "",
     link: "",
     technologies: [] as string[],
     images: [] as string[],
+    status: "Completed",
   });
 
   const [techInput, setTechInput] = useState("");
   const [imageInput, setImageInput] = useState("");
 
   const categories = ["Web Development", "Photography", "UI/UX Design"];
+  const statuses = ["Completed", "In Progress", "Planned"];
 
   // Load project data if editing
   useEffect(() => {
@@ -169,6 +171,26 @@ const AdminProjectForm = () => {
               className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
               placeholder="https://example.com"
             />
+          </div>
+
+          {/* Status */}
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-white mb-2">
+              Status *
+            </label>
+            <select
+              id="status"
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              required
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
+            >
+              {statuses.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Technologies */}
