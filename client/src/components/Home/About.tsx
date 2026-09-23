@@ -5,7 +5,7 @@ import { ArrowDown } from 'lucide-react';
 
 const About = () => {
 
-    const [openIndex, setOpenIndex] = useState(null);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     const aboutFaqs = [
         {

@@ -63,7 +63,7 @@ const Login = () => {
                 // Validate password
                 const passwordValidation = validatePassword(formData.password);
                 if (!passwordValidation.valid) {
-                    toast.error(passwordValidation.message);
+                    toast.error(passwordValidation.message || "Invalid password");
                     return;
                 }
 

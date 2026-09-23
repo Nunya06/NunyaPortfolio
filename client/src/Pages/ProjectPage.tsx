@@ -120,14 +120,14 @@ const ProjectPage = () => {
 
                         <div className="flex flex-col sm:flex-row gap-4 mt-auto">
 
-
-                            <a
-                                href={project.link}
-                                className="flex-1 bg-orange-700 hover:bg-orange-800 text-white text-center py-3 sm:py-4 rounded-lg font-medium transition-colors"
-                            >
-                                View Live Project
-                            </a>
-
+                            {project.link && (
+                                <a
+                                    href={project.link}
+                                    className="flex-1 bg-orange-700 hover:bg-orange-800 text-white text-center py-3 sm:py-4 rounded-lg font-medium transition-colors"
+                                >
+                                    View Live Project
+                                </a>
+                            )}
 
 
                         </div>

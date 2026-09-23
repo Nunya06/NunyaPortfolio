@@ -3,7 +3,7 @@ import { assets } from '../../assets/assets';
 
 
 const Cta = () => {
-    const [openIndex, setOpenIndex] = useState(null);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     const faqs = [
         {
@@ -27,7 +27,7 @@ const Cta = () => {
         <section className="w-full bg-black px-8 py-10 md:px-16 lg:px-32">
 
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-start justify-center gap-8 px-4 md:px-0">
-                
+
 
                 {/* <div className="text-center mb-8">
                     <div className="flex flex-wrap items-center justify-center gap-2 pl-2.5 pr-4 py-2 mt-10">

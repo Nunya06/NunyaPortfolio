@@ -156,198 +156,204 @@ const AdminProjectForm = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
-          {/* Title */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-white mb-2">
-              Project Title *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-              placeholder="Enter project title"
-            />
-          </div>
-
-          {/* Category */}
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-white mb-2">
-              Category *
-            </label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              required
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-white mb-2">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              required
-              rows={4}
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
-              placeholder="Describe your project..."
-            />
-          </div>
-
-          {/* Link */}
-          <div>
-            <label htmlFor="link" className="block text-sm font-medium text-white mb-2">
-              Project Link (Optional)
-            </label>
-            <input
-              type="url"
-              id="link"
-              value={formData.link}
-              onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-              placeholder="https://example.com"
-            />
-          </div>
-
-          {/* Status */}
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-white mb-2">
-              Status *
-            </label>
-            <select
-              id="status"
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              required
-              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
-            >
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Technologies */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Technologies *
-            </label>
-            <div className="flex gap-2 mb-3">
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
+            {/* Title */}
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-white mb-2">
+                Project Title *
+              </label>
               <input
                 type="text"
-                value={techInput}
-                onChange={(e) => setTechInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
-                className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-                placeholder="Add technology (e.g., React, Node.js)"
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+                placeholder="Enter project title"
               />
-              <button
-                type="button"
-                onClick={addTechnology}
-                className="px-4 py-3 bg-orange-900 hover:bg-orange-800 text-white rounded-lg transition-colors"
+            </div>
+
+            {/* Category */}
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-white mb-2">
+                Category *
+              </label>
+              <select
+                id="category"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                required
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
               >
-                <Plus className="w-5 h-5" />
-              </button>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.technologies.map((tech, index) => (
-                <span
-                  key={index}
-                  className="flex items-center gap-2 bg-neutral-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm"
-                >
-                  {tech}
-                  <button
-                    type="button"
-                    onClick={() => removeTechnology(index)}
-                    className="text-slate-500 hover:text-red-400 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
 
-          {/* Images */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Images * (Max 5)
-            </label>
-
-            <div className="mb-4">
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleImageUpload(e.target.files)}
-                disabled={isUploading || formData.images.length >= 5}
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            {/* Description */}
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-white mb-2">
+                Description *
+              </label>
+              <textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+                rows={4}
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
+                placeholder="Describe your project..."
               />
-              {isUploading && (
-                <p className="text-sm text-orange-900 mt-2">Uploading images...</p>
-              )}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {formData.images.map((image, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={image}
-                    alt={`Project image ${index + 1}`}
-                    className="w-full h-24 object-cover rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 p-1 bg-red-500/80 hover:bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+            {/* Link */}
+            <div>
+              <label htmlFor="link" className="block text-sm font-medium text-white mb-2">
+                Project Link (Optional)
+              </label>
+              <input
+                type="url"
+                id="link"
+                value={formData.link}
+                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+                placeholder="https://example.com"
+              />
+            </div>
+
+            {/* Status */}
+            <div>
+              <label htmlFor="status" className="block text-sm font-medium text-white mb-2">
+                Status *
+              </label>
+              <select
+                id="status"
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                required
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
+              >
+                {statuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Technologies */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Technologies *
+              </label>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={techInput}
+                  onChange={(e) => setTechInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
+                  className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+                  placeholder="Add technology (e.g., React, Node.js)"
+                />
+                <button
+                  type="button"
+                  onClick={addTechnology}
+                  className="px-4 py-3 bg-orange-900 hover:bg-orange-800 text-white rounded-lg transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.technologies.map((tech, index) => (
+                  <span
+                    key={index}
+                    className="flex items-center gap-2 bg-neutral-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm"
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                    {tech}
+                    <button
+                      type="button"
+                      onClick={() => removeTechnology(index)}
+                      className="text-slate-500 hover:text-red-400 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </span>
+                ))}
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
-              {formData.images.length}/5 images added
-            </p>
-          </div>
-        </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => navigate("/superAdmin/projects")}
-            className="px-6 py-2.5 border border-neutral-700 text-slate-300 rounded-lg hover:bg-neutral-800 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting || isUploading}
-            className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Saving..." : isUploading ? "Uploading..." : isEditing ? "Update Project" : "Save Project"}
-          </button>
-        </div>
-      </form>
+            {/* Images */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Images * (Max 5)
+              </label>
+
+              <div className="mb-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleImageUpload(e.target.files)}
+                  disabled={isUploading || formData.images.length >= 5}
+                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                {isUploading && (
+                  <p className="text-sm text-orange-900 mt-2">Uploading images...</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                {formData.images.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={image}
+                      alt={`Project image ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 p-1 bg-red-500/80 hover:bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {formData.images.length}/5 images added
+              </p>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/superAdmin/projects")}
+              className="px-6 py-2.5 border border-neutral-700 text-slate-300 rounded-lg hover:bg-neutral-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || isUploading}
+              className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Saving..." : isUploading ? "Uploading..." : isEditing ? "Update Project" : "Save Project"}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
