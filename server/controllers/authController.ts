@@ -1,4 +1,4 @@
- import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -15,6 +15,29 @@ const getAdminStatus = (email: string | null | undefined): boolean => {
     return adminEmails.includes(email.toLowerCase());
 };
 
+// Password validation
+const validatePassword = (password: string): { valid: boolean; message?: string } => {
+    if (password.length < 8) {
+        return { valid: false, message: "Password must be at least 8 characters long" };
+    }
+
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!hasLetter) {
+        return { valid: false, message: "Password must contain at least one letter" };
+    }
+    if (!hasNumber) {
+        return { valid: false, message: "Password must contain at least one number" };
+    }
+    if (!hasSpecialChar) {
+        return { valid: false, message: "Password must contain at least one special character" };
+    }
+
+    return { valid: true };
+};
+
 // Register
 // POST /api/auth/register
 export const register = async (req: Request, res: Response) => {
@@ -22,6 +45,12 @@ export const register = async (req: Request, res: Response) => {
 
     if (!name || !email || !password) {
         return res.status(400).json({ message: "Please provide all fields" });
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+        return res.status(400).json({ message: passwordValidation.message });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
@@ -54,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Please provide email and password" });
     }
 
-    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() }, include: { addresses: true } });
+    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
 
     if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
