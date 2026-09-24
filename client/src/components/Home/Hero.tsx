@@ -17,15 +17,15 @@ import { heroAPI } from '../../config/apiService';
 const Hero = () => {
 
     const [heroData, setHeroData] = useState({
-        badgeText: "Software Developer & Photographer",
-        heading: "I build thoughtful software<br />people trust.",
-        subheading: "I create thoughtful software and striking images, blending technical precision with a creative eye.",
+        badgeText: "",
+        heading: "",
+        subheading: "",
         image: "",
-        primaryButtonText: "View My Work",
-        primaryButtonLink: "/projects",
-        secondaryButtonText: "Download Resume",
-        secondaryButtonLink: "#",
-        footerText: "Code, cameras, and a curiosity for better ideas",
+        primaryButtonText: "",
+        primaryButtonLink: "",
+        secondaryButtonText: "",
+        secondaryButtonLink: "",
+        footerText: "",
     });
 
     const [isLoading, setIsLoading] = useState(true);

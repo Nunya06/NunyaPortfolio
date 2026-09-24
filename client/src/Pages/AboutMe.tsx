@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
-import { skillsAPI, experienceAPI } from "../config/apiService";
+import { skillsAPI, experienceAPI, heroAPI } from "../config/apiService";
 import type { Skill, Experience } from "../types";
 
 const AboutMe = () => {
@@ -10,6 +10,18 @@ const AboutMe = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [heroData, setHeroData] = useState({
+        badgeText: "",
+        heading: "",
+        subheading: "",
+        image: "",
+        primaryButtonText: "",
+        primaryButtonLink: "",
+        secondaryButtonText: "",
+        secondaryButtonLink: "",
+        footerText: "",
+    });
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -17,6 +29,20 @@ const AboutMe = () => {
                     skillsAPI.getAllSkills(),
                     experienceAPI.getAllExperience()
                 ]);
+                const data = await heroAPI.getHero();
+
+                setHeroData({
+                    badgeText: data.badgeText,
+                    heading: data.heading,
+                    subheading: data.subheading,
+                    image: data.image || "",
+                    primaryButtonText: data.primaryButtonText,
+                    primaryButtonLink: data.primaryButtonLink,
+                    secondaryButtonText: data.secondaryButtonText,
+                    secondaryButtonLink: data.secondaryButtonLink,
+                    footerText: data.footerText,
+                });
+
                 setSkills(skillsData);
                 setExperience(experienceData);
             } catch (err) {
@@ -64,7 +90,7 @@ const AboutMe = () => {
                             />
                         </div>
                         <div className="w-full md:w-1/2">
-                            <h2 className="text-3xl font-semibold text-white mb-4">Who I Am</h2>
+                            <h2 className="text-3xl font-semibold text-orange-700 mb-4">{heroData.badgeText}</h2>
                             <p className="text-slate-400 leading-relaxed mb-6">
                                 I'm a passionate software developer and photographer based in the digital world. With a unique blend of technical expertise and creative vision, I bring ideas to life through code and imagery.
                             </p>

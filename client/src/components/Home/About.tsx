@@ -60,7 +60,7 @@ const About = () => {
 
             <div className="mx-auto max-w-5xl">
 
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-700">About Me</p>
+                <p className="text-xs font-semibold  tracking-[0.2em] text-orange-700">About Me</p>
 
                 <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-5xl">
 
