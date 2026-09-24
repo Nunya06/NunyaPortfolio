@@ -100,16 +100,16 @@ const AdminMessages = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-white mb-2">Messages</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-2">Messages</h1>
           <p className="text-slate-400">
             {messages.filter(m => !m.isRead).length} unread messages
           </p>
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Messages List */}
-        <div className="w-1/2 space-y-3">
+        <div className={`w-full lg:w-1/2 space-y-3 ${selectedMessage ? 'hidden lg:block' : 'block'}`}>
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
@@ -124,11 +124,11 @@ const AdminMessages = () => {
                 } ${!message.isRead ? "border-l-4 border-l-orange-900" : ""}`}
             >
               <div className="flex items-start justify-between mb-2">
-                <div className="flex-1">
-                  <p className="text-white font-medium">{message.name}</p>
-                  <p className="text-slate-400 text-sm">{message.email}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-medium truncate">{message.name}</p>
+                  <p className="text-slate-400 text-sm truncate">{message.email}</p>
                 </div>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-500 ml-2 whitespace-nowrap">
                   {formatDate(message.createdAt)}
                 </span>
               </div>
@@ -150,22 +150,28 @@ const AdminMessages = () => {
         </div>
 
         {/* Message Detail */}
-        <div className="w-1/2">
+        <div className={`w-full lg:w-1/2 ${selectedMessage ? 'block' : 'hidden lg:block'}`}>
           {selectedMessage ? (
-            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-white mb-2">
+            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 space-y-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <button
+                    onClick={() => setSelectedMessage(null)}
+                    className="lg:hidden mb-3 text-slate-400 hover:text-white text-sm flex items-center gap-1"
+                  >
+                    ← Back to messages
+                  </button>
+                  <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 truncate">
                     {selectedMessage.subject || "No Subject"}
                   </h2>
-                  <p className="text-slate-400">
+                  <p className="text-slate-400 text-sm">
                     From: {selectedMessage.name} ({selectedMessage.email})
                   </p>
                   <p className="text-slate-500 text-sm mt-1">
                     {formatDate(selectedMessage.createdAt)}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   {!selectedMessage.isRead && (
                     <button
                       onClick={() => markAsRead(selectedMessage.id)}
@@ -187,13 +193,13 @@ const AdminMessages = () => {
 
               <div className="border-t border-neutral-800 pt-6">
                 <h3 className="text-sm font-medium text-slate-400 mb-3">Message</h3>
-                <p className="text-white whitespace-pre-wrap">{selectedMessage.message}</p>
+                <p className="text-white whitespace-pre-wrap text-sm sm:text-base">{selectedMessage.message}</p>
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-neutral-800">
                 <a
                   href={`mailto:${selectedMessage.email}`}
-                  className="flex-1 px-4 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors text-center"
+                  className="flex-1 px-4 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors text-center text-sm"
                 >
                   Reply via Email
                 </a>
