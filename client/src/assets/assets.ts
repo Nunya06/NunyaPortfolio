@@ -1,7 +1,6 @@
 
 import logo from "./logo.png";
 import profile from "./passport-pic.jpg"
-import resume from "./resume.pdf"
 import photoshop from "./photoshop.png"
 import laravel from "./laravel.png"
 import reactjs from "./reactjs.png"
@@ -18,7 +17,6 @@ export const assets = {
 
     logo,
     profile,
-    resume,
     photoshop,
     laravel,
     reactjs,
