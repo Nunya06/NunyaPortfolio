@@ -44,8 +44,6 @@ const AdminProjectForm = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const [isUploading, setIsUploading] = useState(false);
 
 
@@ -63,8 +61,6 @@ const AdminProjectForm = () => {
     if (isEditing && id) {
 
       const fetchProject = async () => {
-
-        setIsLoading(true);
 
         try {
 
@@ -93,10 +89,6 @@ const AdminProjectForm = () => {
           console.error("Failed to fetch project:", err);
 
           toast.error("Failed to load project");
-
-        } finally {
-
-          setIsLoading(false);
 
         }
 

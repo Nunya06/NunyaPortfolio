@@ -128,7 +128,7 @@ const Login = () => {
 
                 if (!passwordValidation.valid) {
 
-                    toast.error(passwordValidation.message);
+                    toast.error(passwordValidation.message || "Invalid password");
 
                     return;
 

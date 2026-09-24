@@ -8,7 +8,7 @@ import { assets } from '../../assets/assets';
 
 const Cta = () => {
 
-    const [openIndex, setOpenIndex] = useState(null);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
 
 

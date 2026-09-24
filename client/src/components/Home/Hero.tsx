@@ -17,27 +17,15 @@ import { heroAPI } from '../../config/apiService';
 const Hero = () => {
 
     const [heroData, setHeroData] = useState({
-
         badgeText: "Software Developer & Photographer",
-
         heading: "I build thoughtful software<br />people trust.",
-
         subheading: "I create thoughtful software and striking images, blending technical precision with a creative eye.",
-
         image: "",
-
         primaryButtonText: "View My Work",
-
         primaryButtonLink: "/projects",
-
         secondaryButtonText: "Download Resume",
-
         secondaryButtonLink: "#",
-
-        resumeUrl: "",
-
         footerText: "Code, cameras, and a curiosity for better ideas",
-
     });
 
     const [isLoading, setIsLoading] = useState(true);
@@ -148,37 +136,11 @@ const Hero = () => {
 
                             </Link>
 
-                            {heroData.resumeUrl ? (
+                            <Link to={heroData.secondaryButtonLink} className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
 
-                                <a
+                                {heroData.secondaryButtonText}
 
-                                    href={heroData.resumeUrl}
-
-                                    download="resume.pdf"
-
-                                    className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer"
-
-                                >
-
-                                    {heroData.secondaryButtonText}
-
-                                </a>
-
-                            ) : (
-
-                                <a
-
-                                    href={heroData.secondaryButtonLink}
-
-                                    className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer"
-
-                                >
-
-                                    {heroData.secondaryButtonText}
-
-                                </a>
-
-                            )}
+                            </Link>
 
                         </div>
 
