@@ -40,7 +40,17 @@ const Hero = () => {
 
                 const data = await heroAPI.getHero();
 
-                setHeroData(data);
+                setHeroData({
+                    badgeText: data.badgeText,
+                    heading: data.heading,
+                    subheading: data.subheading,
+                    image: data.image || "",
+                    primaryButtonText: data.primaryButtonText,
+                    primaryButtonLink: data.primaryButtonLink,
+                    secondaryButtonText: data.secondaryButtonText,
+                    secondaryButtonLink: data.secondaryButtonLink,
+                    footerText: data.footerText,
+                });
 
             } catch (err) {
 

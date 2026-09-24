@@ -4,13 +4,13 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 import { contactAPI, socialLinksAPI, messagesAPI } from "../config/apiService";
 
-import type { Contact, SocialLink } from "../types";
+import type { Contact as ContactType, SocialLink } from "../types";
 
 import toast from "react-hot-toast";
 
 
 
-const Contact = () => {
+const ContactPage = () => {
 
   const [formData, setFormData] = useState({
 
@@ -24,7 +24,7 @@ const Contact = () => {
 
   });
 
-  const [contact, setContact] = useState<Contact | null>(null);
+  const [contact, setContact] = useState<ContactType | null>(null);
 
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
@@ -490,5 +490,5 @@ const Contact = () => {
 
 
 
-export default Contact;
+export default ContactPage;
 

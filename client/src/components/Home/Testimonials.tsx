@@ -62,7 +62,7 @@ const Testimonials = () => {
 
 
 
-    const renderCard = (testimonial, index) => (
+    const renderCard = (testimonial: Testimonial, index: number) => (
 
         <div key={index} className="bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-6 shrink-0 w-[350px]">
 
