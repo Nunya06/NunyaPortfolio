@@ -14,6 +14,8 @@ const Hero = () => {
         image: "",
         primaryButtonText: "View My Work",
         primaryButtonLink: "/projects",
+        secondaryButtonText: "Download Resume",
+        secondaryButtonLink: "#",
         footerText: "Code, cameras, and a curiosity for better ideas",
     });
     const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +31,8 @@ const Hero = () => {
                     image: data.image || "",
                     primaryButtonText: data.primaryButtonText,
                     primaryButtonLink: data.primaryButtonLink,
+                    secondaryButtonText: data.secondaryButtonText,
+                    secondaryButtonLink: data.secondaryButtonLink,
                     footerText: data.footerText,
                 });
             } catch (err) {
@@ -78,10 +82,10 @@ const Hero = () => {
                             <Link to={heroData.primaryButtonLink} className="flex items-center justify-center gap-1 bg-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
                                 {heroData.primaryButtonText}
                             </Link>
-                            <Link to={heroData.primaryButtonLink} className="flex items-center justify-center gap-1 bg-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
-                                {heroData.primaryButtonText}
+                            <Link to={heroData.secondaryButtonLink} className="flex items-center justify-center gap-1 border border-orange-700 hover:bg-orange-700 px-5 text-sm py-2.5 text-white rounded-lg cursor-pointer">
+                                {heroData.secondaryButtonText}
                             </Link>
-                            
+
                         </div>
 
                         <div className='flex items-center gap-2.5 px-6 mt-9'>

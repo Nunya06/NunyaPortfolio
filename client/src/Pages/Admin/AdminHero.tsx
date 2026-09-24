@@ -11,13 +11,15 @@ const AdminHero = () => {
     image: "",
     primaryButtonText: "",
     primaryButtonLink: "",
+    secondaryButtonText: "",
+    secondaryButtonLink: "",
     footerText: "",
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   useEffect(() => {
     const fetchHero = async () => {
       setIsLoading(true);
@@ -30,6 +32,8 @@ const AdminHero = () => {
           image: data.image || "",
           primaryButtonText: data.primaryButtonText,
           primaryButtonLink: data.primaryButtonLink,
+          secondaryButtonText: data.secondaryButtonText,
+          secondaryButtonLink: data.secondaryButtonLink,
           footerText: data.footerText,
         });
       } catch (err) {
@@ -178,7 +182,35 @@ const AdminHero = () => {
               </div>
             </div>
 
-            
+            {/* Secondary Button */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="secondaryButtonText" className="block text-sm font-medium text-white mb-2">
+                  Secondary Button Text
+                </label>
+                <input
+                  type="text"
+                  id="secondaryButtonText"
+                  value={heroData.secondaryButtonText}
+                  onChange={(e) => setHeroData({ ...heroData, secondaryButtonText: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+                  placeholder="e.g., Download Resume"
+                />
+              </div>
+              <div>
+                <label htmlFor="secondaryButtonLink" className="block text-sm font-medium text-white mb-2">
+                  Secondary Button Link
+                </label>
+                <input
+                  type="text"
+                  id="secondaryButtonLink"
+                  value={heroData.secondaryButtonLink}
+                  onChange={(e) => setHeroData({ ...heroData, secondaryButtonLink: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+                  placeholder="e.g., /contact"
+                />
+              </div>
+            </div>
 
             {/* Footer Text */}
             <div>
