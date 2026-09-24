@@ -48,7 +48,7 @@ const AdminProjectForm = () => {
 
 
 
-  const categories = ["Web Development", "Photography", "UI/UX Design"];
+  const categories = ["Web Development", "Photography & Videography", "UI/UX Design", "Mobile App Development", "Graphic Design", "Others"];
 
   const statuses = ["Completed", "In Progress", "Planned"];
 
