@@ -22,11 +22,18 @@ import AdminExperienceForm from './Pages/Admin/AdminExperienceForm'
 import AdminHero from './Pages/Admin/AdminHero'
 import AdminMessages from './Pages/Admin/AdminMessages'
 import NotFound from './Pages/NotFound'
+import ScrollToTop from './components/ScrollToTop'
+import { Toaster } from 'react-hot-toast'
 
 
 const App = () => {
   return (
     <>
+
+<Toaster position="top-right" toastOptions={{ duration: 3000, style: { background: "#1B3022", color: "#fff", borderRadius: "12px", fontSize: "14px" } }} />
+
+            <ScrollToTop />
+
       <Routes>
 
         <Route path="/access" element={<Login />} />
