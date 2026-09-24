@@ -60,20 +60,6 @@ const AdminHero = () => {
     }
   };
 
-  // const handleResumeUpload = async (file: File) => {
-  //   setIsUploadingResume(true);
-  //   try {
-  //     const result = await uploadAPI.uploadSingle(file);
-  //     setHeroData({ ...heroData, resumeUrl: result.url });
-  //     toast.success("Resume uploaded successfully");
-  //   } catch (err) {
-  //     console.error("Failed to upload resume:", err);
-  //     toast.error("Failed to upload resume");
-  //   } finally {
-  //     setIsUploadingResume(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);

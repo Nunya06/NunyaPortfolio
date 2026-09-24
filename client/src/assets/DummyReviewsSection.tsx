@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { Product } from "../types";
 import { StarIcon, ThumbsUpIcon } from "lucide-react";
 
 /* ─── Dummy Reviews Section ─── */
@@ -35,7 +36,7 @@ function seededRandom(seed: string) {
     };
 }
 
-export default function DummyReviewsSection({ product }: { product: any }) {
+export default function DummyReviewsSection({ product }: { product: Product }) {
     const reviews = useMemo(() => {
         const rng = seededRandom(product.id);
         const count = Math.min(product.reviewCount, 6);

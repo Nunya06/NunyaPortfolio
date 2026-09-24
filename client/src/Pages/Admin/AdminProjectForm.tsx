@@ -1,361 +1,743 @@
 import { useState, useEffect } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
-import { X, Plus, Trash2 } from "lucide-react";
+
+import { X, Trash2 } from "lucide-react";
+
 import { projectsAPI, uploadAPI } from "../../config/apiService";
+
 import toast from "react-hot-toast";
 
+
+
 const AdminProjectForm = () => {
+
   const navigate = useNavigate();
+
   const { id } = useParams();
+
   const isEditing = !!id;
 
+
+
   const [formData, setFormData] = useState({
+
     title: "",
+
     category: "",
+
     description: "",
+
     link: "",
+
     technologies: [] as string[],
+
     images: [] as string[],
-    status: "Completed",
+
+    status: "",
+
   });
 
+
+
   const [techInput, setTechInput] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [isUploading, setIsUploading] = useState(false);
 
+
+
   const categories = ["Web Development", "Photography", "UI/UX Design"];
+
   const statuses = ["Completed", "In Progress", "Planned"];
 
+
+
   // Load project data if editing
+
   useEffect(() => {
+
     if (isEditing && id) {
+
       const fetchProject = async () => {
+
         setIsLoading(true);
+
         try {
+
           const project = await projectsAPI.getProjectById(id);
+
           setFormData({
+
             title: project.title,
+
             category: project.category,
+
             description: project.description,
+
             link: project.link || "",
+
             technologies: project.technologies,
+
             images: project.images,
+
             status: project.status,
+
           });
+
         } catch (err) {
+
           console.error("Failed to fetch project:", err);
+
           toast.error("Failed to load project");
+
         } finally {
+
           setIsLoading(false);
+
         }
+
       };
+
       fetchProject();
+
     }
+
   }, [isEditing, id]);
 
+
+
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
 
-    if (formData.images.length === 0) {
-      toast.error("Please add at least one image");
+    if (!formData.title) {
+      toast.error("Please provide a project title");
       return;
     }
+
+    if (!formData.category) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    if (!formData.description) {
+      toast.error("Please provide a project description");
+      return;
+    }
+
+    if (!formData.status) {
+      toast.error("Please select a status");
+      return;
+    }
+
+    if (formData.images.length === 0) {
+
+      toast.error("Please add at least one image");
+
+      return;
+
+    }
+
+
 
     setIsSubmitting(true);
 
+
+
     try {
+
+      console.log("Submitting project data:", formData);
+      console.log("Title:", formData.title);
+      console.log("Category:", formData.category);
+      console.log("Description:", formData.description);
+      console.log("Images:", formData.images);
+      console.log("Technologies:", formData.technologies);
+      console.log("Link:", formData.link);
+      console.log("Status:", formData.status);
+
       if (isEditing && id) {
+
         await projectsAPI.updateProject(id, formData);
+
         toast.success("Project updated successfully!");
+
       } else {
-        await projectsAPI.createProject(formData);
-        toast.success("Project saved successfully!");
+
+        const response = await projectsAPI.createProject(formData);
+
+        console.log("Create response:", response);
+
+        toast.success("Project created successfully!");
+
       }
+
       navigate("/superAdmin/projects");
-    } catch (err) {
+
+    } catch (err: any) {
+
       console.error("Failed to save project:", err);
-      toast.error("Failed to save project");
+
+      // console.error("Error response:", err.response?.data);
+
+      // console.error("Error status:", err.response?.status);
+
+      // console.error("Error config:", err.config);
+
+      // toast.error(err.response?.data?.message || "Failed to save project");
+
     } finally {
+
       setIsSubmitting(false);
+
     }
+
   };
+
+
 
   const addTechnology = () => {
+
     if (techInput.trim() && !formData.technologies.includes(techInput.trim())) {
+
       setFormData({
+
         ...formData,
+
         technologies: [...formData.technologies, techInput.trim()],
+
       });
+
       setTechInput("");
+
     }
+
   };
+
+
 
   const removeTechnology = (index: number) => {
+
     setFormData({
+
       ...formData,
+
       technologies: formData.technologies.filter((_, i) => i !== index),
+
     });
+
   };
+
+
 
   const handleImageUpload = async (files: FileList | null) => {
+
     if (!files || files.length === 0) return;
 
+
+
     const newFiles = Array.from(files);
+
     const totalImages = formData.images.length + newFiles.length;
 
+
+
     if (totalImages > 5) {
+
       toast.error("Maximum 5 images allowed");
+
       return;
+
     }
+
+
 
     setIsUploading(true);
+
     try {
+
+      console.log("Uploading files:", newFiles);
+
       const uploadPromises = newFiles.map(file => uploadAPI.uploadSingle(file));
+
       const results = await Promise.all(uploadPromises);
+
+      console.log("Upload results:", results);
+
       const imageUrls = results.map(result => result.url);
 
+      console.log("Image URLs:", imageUrls);
+
+
+
       setFormData({
+
         ...formData,
+
         images: [...formData.images, ...imageUrls],
+
       });
+
       toast.success("Images uploaded successfully");
+
     } catch (err) {
+
       console.error("Failed to upload images:", err);
+
+      console.error("Upload error details:", err);
+
       toast.error("Failed to upload images");
+
     } finally {
+
       setIsUploading(false);
+
     }
+
   };
+
+
 
   const removeImage = (index: number) => {
+
     setFormData({
+
       ...formData,
+
       images: formData.images.filter((_, i) => i !== index),
+
     });
+
   };
 
+
+
   return (
+
     <div className="space-y-6">
+
       {/* Header */}
+
       <div className="flex items-center justify-between">
+
         <div>
+
           <h1 className="text-3xl font-semibold text-white mb-2">
+
             {isEditing ? "Edit Project" : "Add New Project"}
+
           </h1>
+
           <p className="text-slate-400">
+
             {isEditing ? "Update the project details" : "Fill in the details to create a new project"}
+
           </p>
+
         </div>
+
         <button
+
           onClick={() => navigate("/superAdmin/projects")}
+
           className="text-slate-400 hover:text-white transition-colors"
+
         >
+
           Cancel
+
         </button>
+
       </div>
 
+
+
       {/* Form */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
-            {/* Title */}
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-white mb-2">
-                Project Title *
-              </label>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+
+        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
+
+          {/* Title */}
+
+          <div>
+
+            <label htmlFor="title" className="block text-sm font-medium text-white mb-2">
+
+              Project Title *
+
+            </label>
+
+            <input
+
+              type="text"
+
+              id="title"
+
+              value={formData.title}
+
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+
+              required
+
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+
+              placeholder="Enter project title"
+
+            />
+
+          </div>
+
+
+
+          {/* Category */}
+
+          <div>
+
+            <label htmlFor="category" className="block text-sm font-medium text-white mb-2">
+
+              Category *
+
+            </label>
+
+            <select
+
+              id="category"
+
+              value={formData.category}
+
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+
+              required
+
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
+
+            >
+
+              <option value="">Select category</option>
+
+              {categories.map((category) => (
+
+                <option key={category} value={category}>
+
+                  {category}
+
+                </option>
+
+              ))}
+
+            </select>
+
+          </div>
+
+
+
+          {/* Description */}
+
+          <div>
+
+            <label htmlFor="description" className="block text-sm font-medium text-white mb-2">
+
+              Description *
+
+            </label>
+
+            <textarea
+
+              id="description"
+
+              value={formData.description}
+
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+
+              required
+
+              rows={4}
+
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
+
+              placeholder="Describe your project..."
+
+            />
+
+          </div>
+
+
+
+          {/* Link */}
+
+          <div>
+
+            <label htmlFor="link" className="block text-sm font-medium text-white mb-2">
+
+              Project Link (Optional)
+
+            </label>
+
+            <input
+
+              type="url"
+
+              id="link"
+
+              value={formData.link}
+
+              onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+
+              placeholder="https://example.com"
+
+            />
+
+          </div>
+
+
+
+          {/* Status */}
+
+          <div>
+
+            <label htmlFor="status" className="block text-sm font-medium text-white mb-2">
+
+              Status *
+
+            </label>
+
+            <select
+
+              id="status"
+
+              value={formData.status}
+
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+
+              required
+
+              className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
+
+            >
+
+              <option value="">Select status</option>
+
+              {statuses.map((status) => (
+
+                <option key={status} value={status}>
+
+                  {status}
+
+                </option>
+
+              ))}
+
+            </select>
+
+          </div>
+
+
+
+          {/* Technologies */}
+
+          <div>
+
+            <label className="block text-sm font-medium text-white mb-2">
+
+              Technologies *
+
+            </label>
+
+            <div className="flex gap-2 mb-3">
+
               <input
+
                 type="text"
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-                placeholder="Enter project title"
+
+                value={techInput}
+
+                onChange={(e) => setTechInput(e.target.value)}
+
+                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
+
+                className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
+
+                placeholder="Add technology (e.g., React, Node.js)"
+
               />
+
             </div>
 
-            {/* Category */}
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-white mb-2">
-                Category *
-              </label>
-              <select
-                id="category"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                required
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <div className="flex flex-wrap gap-2">
 
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-white mb-2">
-                Description *
-              </label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                required
-                rows={4}
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
-                placeholder="Describe your project..."
-              />
-            </div>
+              {formData.technologies.map((tech, index) => (
 
-            {/* Link */}
-            <div>
-              <label htmlFor="link" className="block text-sm font-medium text-white mb-2">
-                Project Link (Optional)
-              </label>
-              <input
-                type="url"
-                id="link"
-                value={formData.link}
-                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-                placeholder="https://example.com"
-              />
-            </div>
+                <span
 
-            {/* Status */}
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-white mb-2">
-                Status *
-              </label>
-              <select
-                id="status"
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                required
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-orange-900 transition-colors"
-              >
-                {statuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </div>
+                  key={index}
 
-            {/* Technologies */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Technologies *
-              </label>
-              <div className="flex gap-2 mb-3">
-                <input
-                  type="text"
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
-                  className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors"
-                  placeholder="Add technology (e.g., React, Node.js)"
-                />
-                <button
-                  type="button"
-                  onClick={addTechnology}
-                  className="px-4 py-3 bg-orange-900 hover:bg-orange-800 text-white rounded-lg transition-colors"
+                  className="flex items-center gap-2 bg-neutral-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm"
+
                 >
-                  <Plus className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.technologies.map((tech, index) => (
-                  <span
-                    key={index}
-                    className="flex items-center gap-2 bg-neutral-800 text-slate-300 px-3 py-1.5 rounded-lg text-sm"
+
+                  {tech}
+
+                  <button
+
+                    type="button"
+
+                    onClick={() => removeTechnology(index)}
+
+                    className="text-slate-500 hover:text-red-400 transition-colors"
+
                   >
-                    {tech}
-                    <button
-                      type="button"
-                      onClick={() => removeTechnology(index)}
-                      className="text-slate-500 hover:text-red-400 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </span>
-                ))}
-              </div>
+
+                    <X className="w-4 h-4" />
+
+                  </button>
+
+                </span>
+
+              ))}
+
             </div>
 
-            {/* Images */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Images * (Max 5)
-              </label>
+          </div>
 
-              <div className="mb-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => handleImageUpload(e.target.files)}
-                  disabled={isUploading || formData.images.length >= 5}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-                {isUploading && (
-                  <p className="text-sm text-orange-900 mt-2">Uploading images...</p>
-                )}
-              </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={image}
-                      alt={`Project image ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 p-1 bg-red-500/80 hover:bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 mt-2">
-                {formData.images.length}/5 images added
-              </p>
+
+          {/* Images */}
+
+          <div>
+
+            <label className="block text-sm font-medium text-white mb-2">
+
+              Images * (Max 5)
+
+            </label>
+
+
+
+            <div className="mb-4">
+
+              <input
+
+                type="file"
+
+                accept="image/*"
+
+                multiple
+
+                onChange={(e) => handleImageUpload(e.target.files)}
+
+                disabled={isUploading || formData.images.length >= 5}
+
+                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+
+              />
+
+              {isUploading && (
+
+                <p className="text-sm text-orange-900 mt-2">Uploading images...</p>
+
+              )}
+
             </div>
+
+
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+
+              {formData.images.map((image, index) => (
+
+                <div key={index} className="relative group">
+
+                  <img
+
+                    src={image}
+
+                    alt={`Project image ${index + 1}`}
+
+                    className="w-full h-24 object-cover rounded-lg"
+
+                  />
+
+                  <button
+
+                    type="button"
+
+                    onClick={() => removeImage(index)}
+
+                    className="absolute top-2 right-2 p-1 bg-red-500/80 hover:bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+
+                  >
+
+                    <Trash2 className="w-4 h-4" />
+
+                  </button>
+
+                </div>
+
+              ))}
+
+            </div>
+
+            <p className="text-xs text-slate-500 mt-2">
+
+              {formData.images.length}/5 images added
+
+            </p>
+
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate("/superAdmin/projects")}
-              className="px-6 py-2.5 border border-neutral-700 text-slate-300 rounded-lg hover:bg-neutral-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || isUploading}
-              className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Saving..." : isUploading ? "Uploading..." : isEditing ? "Update Project" : "Save Project"}
-            </button>
-          </div>
-        </form>
-      )}
+        </div>
+
+
+
+        {/* Submit Button */}
+
+        <div className="flex justify-end gap-3">
+
+          <button
+
+            type="button"
+
+            onClick={() => navigate("/superAdmin/projects")}
+
+            className="px-6 py-2.5 border border-neutral-700 text-slate-300 rounded-lg hover:bg-neutral-800 transition-colors"
+
+          >
+
+            Cancel
+
+          </button>
+
+          <button
+
+            type="submit"
+
+            disabled={isSubmitting || isUploading}
+
+            className="px-6 py-2.5 bg-orange-900 hover:bg-orange-800 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+
+          >
+
+            {isSubmitting ? "Saving..." : isUploading ? "Uploading..." : isEditing ? "Update Project" : "Save Project"}
+
+          </button>
+
+        </div>
+
+      </form>
+
     </div>
+
   );
+
 };
 
+
+
 export default AdminProjectForm;
+

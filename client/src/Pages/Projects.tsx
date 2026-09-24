@@ -96,7 +96,9 @@ const Projects = () => {
                                         {project.title}
                                     </h3>
                                     <p className="text-sm text-slate-400 mb-4 flex-1">
-                                        {project.description}
+                                        {project.description.length > 50
+                                            ? `${project.description.substring(0, 50)}...`
+                                            : project.description}
                                     </p>
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         {project.technologies.map((tech, index) => (
