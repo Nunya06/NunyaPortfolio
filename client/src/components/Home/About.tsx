@@ -6,6 +6,8 @@ import { heroAPI } from '../../config/apiService';
 
 const About = () => {
 
+     const [isLoading, setIsLoading] = useState(true);
+
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     const [heroData, setHeroData] = useState({
@@ -28,7 +30,11 @@ const About = () => {
     
                     console.error("Failed to fetch hero data:", err);
     
-                }
+                } finally {
+
+                setIsLoading(false);
+
+            }
     
             };
     
@@ -63,7 +69,29 @@ const About = () => {
         },
 
     ];
+    
 
+    if (isLoading) {
+
+        return (
+
+            <main className="w-full bg-black flex-1">
+
+                <div className="w-full px-4 md:px-24 lg:px-32 xl:px-40 mx-auto h-full">
+
+                    <div className="w-full h-full min-h-[calc(100vh-80px)] flex items-center justify-center border-x border-dashed border-neutral-800">
+
+                        <div className="inline-block w-8 h-8 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        );
+
+    }
 
 
     return (
