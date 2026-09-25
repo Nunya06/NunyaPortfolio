@@ -77,36 +77,47 @@ const AboutMe = () => {
                 </div>
             </div>
 
+            {/* Error State */}
+            {error && (
+                <div className="text-center py-12">
+                    <p className="text-red-400 text-lg">{error}</p>
+                </div>
+            )}
+
+
+
             {/* About Section */}
-            <div className="px-4 md:px-24 lg:px-32 xl:px-40 py-16 border-t border-dashed border-neutral-800">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex flex-col md:flex-row gap-12 items-center">
-                        <div className="w-full md:w-1/2">
-                            <img
-                                src={heroData.image}
-                                alt="Profile"
-                                className="rounded-2xl border border-neutral-800 w-full max-w-md mx-auto"
-                            />
-                        </div>
-                        <div className="w-full md:w-1/2">
+            {!isLoading && !error && (
+                <div className="px-4 md:px-24 lg:px-32 xl:px-40 py-16 border-t border-dashed border-neutral-800">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex flex-col md:flex-row gap-12 items-center">
+                            <div className="w-full md:w-1/2">
+                                <img
+                                    src={heroData.image}
+                                    alt="Profile"
+                                    className="rounded-2xl border border-neutral-800 w-full max-w-md mx-auto"
+                                />
+                            </div>
+                            <div className="w-full md:w-1/2">
 
-                            {isLoading && (
+
                                 <h2 className="text-3xl font-semibold text-orange-700 mb-4">{heroData.badgeText}</h2>
-                            )}
 
-                            <p className="text-slate-400 leading-relaxed mb-6">
-                                I'm a passionate software developer and photographer based in the digital world. With a unique blend of technical expertise and creative vision, I bring ideas to life through code and imagery.
-                            </p>
-                            <p className="text-slate-400 leading-relaxed mb-6">
-                                My journey in technology started with curiosity and has evolved into a career focused on building user-centric applications. Alongside development, I've cultivated a deep appreciation for photography, using it to document stories and capture the beauty in everyday moments.
-                            </p>
-                            <p className="text-slate-400 leading-relaxed">
-                                Whether I'm crafting clean code or composing the perfect shot, I approach every project with attention to detail, creativity, and a commitment to excellence.
-                            </p>
+
+                                <p className="text-slate-400 leading-relaxed mb-6">
+                                    I'm a passionate software developer and photographer based in the digital world. With a unique blend of technical expertise and creative vision, I bring ideas to life through code and imagery.
+                                </p>
+                                <p className="text-slate-400 leading-relaxed mb-6">
+                                    My journey in technology started with curiosity and has evolved into a career focused on building user-centric applications. Alongside development, I've cultivated a deep appreciation for photography, using it to document stories and capture the beauty in everyday moments.
+                                </p>
+                                <p className="text-slate-400 leading-relaxed">
+                                    Whether I'm crafting clean code or composing the perfect shot, I approach every project with attention to detail, creativity, and a commitment to excellence.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Skills Section */}
             <div className="px-4 md:px-24 lg:px-32 xl:px-40 py-16 border-t border-dashed border-neutral-800">
