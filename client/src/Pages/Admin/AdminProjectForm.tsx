@@ -194,7 +194,6 @@ const AdminProjectForm = () => {
   const addTechnology = () => {
 
     if (techInput.trim() && !formData.technologies.includes(techInput.trim())) {
-
       setFormData({
 
         ...formData,

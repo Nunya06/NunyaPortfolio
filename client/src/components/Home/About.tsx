@@ -1,53 +1,65 @@
-// import { Aperture, Code2, Users } from 'lucide-react'
-
-import { useState } from 'react'
-
-import { assets } from '../../assets/assets';
-
+import { useEffect, useState } from 'react'
 import { ArrowDown } from 'lucide-react';
+import { heroAPI } from '../../config/apiService';
 
 
 
 const About = () => {
 
-
-
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+    const [heroData, setHeroData] = useState({
+        
+        image: "",
+       
+    });
+
+    useEffect(() => {
+    
+            const fetchHero = async () => {
+    
+                try {
+                    const data = await heroAPI.getHero();
+                    setHeroData({
+                        image: data.image || "",
+                    });
+    
+                } catch (err) {
+    
+                    console.error("Failed to fetch hero data:", err);
+    
+                }
+    
+            };
+    
+            fetchHero();
+    
+        }, []);
+
 
 
 
     const aboutFaqs = [
 
         {
-
             question: "What technologies do you work with?",
-
             answer: "I specialize in React, Next.js, TypeScript, Node.js, and modern CSS frameworks like Tailwind. I'm also experienced with design tools like Figma and Adobe Creative Suite.",
-
         },
 
         {
 
             question: "Do you handle both development and design?",
-
             answer: "Yes! I offer end-to-end solutions from concept to deployment. Whether you need a complete website built from scratch or design improvements for an existing project, I can help.",
-
         },
 
         {
-
             question: "What's your approach to projects?",
-
             answer: "I believe in clean, maintainable code and thoughtful design. Every project starts with understanding your goals, followed by strategic planning, iterative development, and thorough testing.",
-
         },
 
         {
-
             question: "Can you help with photography too?",
-
             answer: "Absolutely. Photography is a passion of mine, and I offer professional photography services including portraits, events, and product photography that complement my design work.",
-
         },
 
     ];
@@ -126,7 +138,7 @@ const About = () => {
 
                             className="max-w-sm w-full rounded-xl h-auto border border-neutral-800"
 
-                            src={assets.profile}
+                            src={heroData.image}
 
                             alt="Profile"
 

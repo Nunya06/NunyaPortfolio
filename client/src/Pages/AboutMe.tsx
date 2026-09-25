@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { assets } from "../assets/assets";
 import { skillsAPI, experienceAPI, heroAPI } from "../config/apiService";
 import type { Skill, Experience } from "../types";
 
@@ -84,7 +83,7 @@ const AboutMe = () => {
                     <div className="flex flex-col md:flex-row gap-12 items-center">
                         <div className="w-full md:w-1/2">
                             <img
-                                src={assets.profile}
+                                src={heroData.image}
                                 alt="Profile"
                                 className="rounded-2xl border border-neutral-800 w-full max-w-md mx-auto"
                             />
