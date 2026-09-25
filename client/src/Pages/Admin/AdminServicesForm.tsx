@@ -135,7 +135,6 @@ const AdminServicesForm = () => {
               <TipTapEditor
                 content={formData.description}
                 onChange={(content) => setFormData({ ...formData, description: content })}
-                placeholder="Describe your service..."
               />
             </div>
 

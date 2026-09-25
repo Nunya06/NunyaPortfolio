@@ -441,7 +441,6 @@ const AdminProjectForm = () => {
             <TipTapEditor
               content={formData.description}
               onChange={(content) => setFormData({ ...formData, description: content })}
-              placeholder="Describe your project..."
             />
           </div>
 

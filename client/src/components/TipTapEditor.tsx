@@ -5,10 +5,9 @@ import { Bold, Italic, List, ListOrdered, Heading1, Heading2, Heading3, Undo, Re
 interface TipTapEditorProps {
   content: string;
   onChange: (content: string) => void;
-  placeholder?: string;
 }
 
-const TipTapEditor = ({ content, onChange, placeholder = 'Type something...' }: TipTapEditorProps) => {
+const TipTapEditor = ({ content, onChange }: TipTapEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,

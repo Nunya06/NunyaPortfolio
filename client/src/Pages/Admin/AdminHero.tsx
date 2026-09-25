@@ -132,7 +132,6 @@ const AdminHero = () => {
               <TipTapEditor
                 content={heroData.subheading}
                 onChange={(content) => setHeroData({ ...heroData, subheading: content })}
-                placeholder="A brief description of what you do"
               />
             </div>
 

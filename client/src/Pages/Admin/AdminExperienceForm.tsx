@@ -190,7 +190,6 @@ const AdminExperienceForm = () => {
               <TipTapEditor
                 content={formData.description}
                 onChange={(content) => setFormData({ ...formData, description: content })}
-                placeholder="Describe your responsibilities and achievements..."
               />
             </div>
           </div>
