@@ -89,7 +89,11 @@ const AboutMe = () => {
                             />
                         </div>
                         <div className="w-full md:w-1/2">
-                            <h2 className="text-3xl font-semibold text-orange-700 mb-4">{heroData.badgeText}</h2>
+
+                            {isLoading && (
+                                <h2 className="text-3xl font-semibold text-orange-700 mb-4">{heroData.badgeText}</h2>
+                            )}
+
                             <p className="text-slate-400 leading-relaxed mb-6">
                                 I'm a passionate software developer and photographer based in the digital world. With a unique blend of technical expertise and creative vision, I bring ideas to life through code and imagery.
                             </p>
