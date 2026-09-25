@@ -181,7 +181,7 @@ const AboutMe = () => {
                                     <span className="text-orange-700 text-sm font-medium">{getYearRange(exp.startDate, exp.endDate)}</span>
                                     <h3 className="text-xl font-semibold text-white mt-1">{exp.role}</h3>
                                     <p className="text-slate-400 font-medium">{exp.company}</p>
-                                    <p className="text-slate-500 mt-2">{exp.description}</p>
+                                    <div className="text-slate-500 mt-2 prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: exp.description }}></div>
                                 </div>
                             ))}
                         </div>

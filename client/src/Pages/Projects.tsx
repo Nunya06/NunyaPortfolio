@@ -10,6 +10,12 @@ const Projects = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const stripHtml = (html: string) => {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    };
+
     // Fetch projects from database
     useEffect(() => {
         const fetchProjects = async () => {
@@ -96,9 +102,9 @@ const Projects = () => {
                                         {project.title}
                                     </h3>
                                     <p className="text-sm text-slate-400 mb-4 flex-1">
-                                        {project.description.length > 50
-                                            ? `${project.description.substring(0, 50)}...`
-                                            : project.description}
+                                        {stripHtml(project.description).length > 50
+                                            ? `${stripHtml(project.description).substring(0, 50)}...`
+                                            : stripHtml(project.description)}
                                     </p>
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         {project.technologies.map((tech, index) => (

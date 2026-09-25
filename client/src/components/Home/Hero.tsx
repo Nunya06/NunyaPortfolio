@@ -130,10 +130,7 @@ const Hero = () => {
 
                         </h1>
 
-                        <p className="text-sm/5.5 text-center max-w-[510px] mt-2.5 mx-auto max-sm:px-4 text-neutral-300">
-
-                            {heroData.subheading}
-
+                        <p className="text-sm/5.5 text-center max-w-[510px] mt-2.5 mx-auto max-sm:px-4 text-neutral-300" dangerouslySetInnerHTML={{ __html: heroData.subheading }}>
                         </p>
 
 

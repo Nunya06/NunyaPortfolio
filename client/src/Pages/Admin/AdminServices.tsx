@@ -9,6 +9,12 @@ const AdminServices = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -112,7 +118,7 @@ const AdminServices = () => {
                           <div>
                             <p className="text-white font-medium">{service.title}</p>
                             <p className="text-slate-400 text-sm line-clamp-1 max-w-xs">
-                              {service.description}
+                              {stripHtml(service.description)}
                             </p>
                           </div>
                         </div>

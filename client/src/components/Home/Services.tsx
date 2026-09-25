@@ -72,9 +72,8 @@ const Services = () => {
                                     <h3 className="text-md font-semibold text-white mb-2 group-hover:text-orange-700 transition-colors">
                                         {service.title}
                                     </h3>
-                                    <p className="text-sm text-slate-400 leading-relaxed">
-                                        {service.description}
-                                    </p>
+                                    <div className="text-sm text-slate-400 leading-relaxed prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: service.description }}>
+                                    </div>
                                 </div>
                             </div>
                         ))}

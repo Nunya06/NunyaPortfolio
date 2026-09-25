@@ -9,6 +9,12 @@ const AdminProjects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -114,7 +120,7 @@ const AdminProjects = () => {
                           <div>
                             <p className="text-white font-medium">{project.title}</p>
                             <p className="text-slate-400 text-sm line-clamp-1 max-w-xs">
-                              {project.description}
+                              {stripHtml(project.description)}
                             </p>
                           </div>
                         </div>

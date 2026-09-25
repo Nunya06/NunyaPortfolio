@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { experienceAPI } from "../../config/apiService";
 import toast from "react-hot-toast";
+import TipTapEditor from "../../components/TipTapEditor";
 
 const AdminExperienceForm = () => {
   const navigate = useNavigate();
@@ -186,13 +187,9 @@ const AdminExperienceForm = () => {
               <label htmlFor="description" className="block text-sm font-medium text-white mb-2">
                 Description *
               </label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                required
-                rows={4}
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
+              <TipTapEditor
+                content={formData.description}
+                onChange={(content) => setFormData({ ...formData, description: content })}
                 placeholder="Describe your responsibilities and achievements..."
               />
             </div>

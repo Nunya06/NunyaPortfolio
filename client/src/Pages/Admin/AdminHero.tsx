@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Save } from "lucide-react";
 import { heroAPI, uploadAPI } from "../../config/apiService";
 import toast from "react-hot-toast";
+import TipTapEditor from "../../components/TipTapEditor";
 
 const AdminHero = () => {
   const [heroData, setHeroData] = useState({
@@ -128,12 +129,9 @@ const AdminHero = () => {
               <label htmlFor="subheading" className="block text-sm font-medium text-white mb-2">
                 Subheading
               </label>
-              <textarea
-                id="subheading"
-                value={heroData.subheading}
-                onChange={(e) => setHeroData({ ...heroData, subheading: e.target.value })}
-                rows={3}
-                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-orange-900 transition-colors resize-none"
+              <TipTapEditor
+                content={heroData.subheading}
+                onChange={(content) => setHeroData({ ...heroData, subheading: content })}
                 placeholder="A brief description of what you do"
               />
             </div>

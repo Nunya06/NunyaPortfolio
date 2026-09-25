@@ -208,11 +208,9 @@ const ProjectPage = () => {
 
 
 
-                        <p className="text-slate-400 text-base sm:text-lg leading-relaxed mb-8">
+                        <div className="text-slate-400 text-base sm:text-lg leading-relaxed mb-8 prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: project.description }}>
 
-                            {project.description}
-
-                        </p>
+                        </div>
 
 
 

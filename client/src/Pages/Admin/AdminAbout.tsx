@@ -123,6 +123,12 @@ const AdminAbout = () => {
     return `${start} - ${end}`;
   };
 
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -258,7 +264,7 @@ const AdminAbout = () => {
                         <h3 className="text-xl font-semibold text-white">{exp.role}</h3>
                       </div>
                       <p className="text-slate-400 font-medium mb-2">{exp.company}</p>
-                      <p className="text-slate-500">{exp.description}</p>
+                      <p className="text-slate-500">{stripHtml(exp.description)}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Link
